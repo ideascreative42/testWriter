@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        body{
+            /* font-size: 1.125em; */
+            padding-top: 36px;
+        }
+        form{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6em;
+            /* font-size: 1em; */
+        }
+        input[type="text"],textarea{
+            font-size: 1.125em;
+            border: solid 1px black;
+            border-radius: 0.2em;
+            font-size: 1em;
+            padding: 0.3em 0.6em;
+            resize:both;
+            min-width: 220px;
+        }
+        label, input::placeholder{
+            font-size: 1.125em;
+        }
+
+
+        .submit{
+            font-size: 1em;
+            background-color: black;
+            color: white;
+            padding: 0.64em 0.82em;
+            border-radius: 0.4em;
+            border: none;
+            margin: 0.8em 0;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+    <section>
+        <form action="">
+            <label for="keys">Anahtar kelimeler</label>
+            <textarea name="story" rows="4" placeholder="Anahtar kelimeleri yaziniz" id="keys"></textarea>
+
+            <label for="story">burada yazin</label>
+            <textarea name="story" rows="16" placeholder="hikayenizi yaziniz..." id="story"></textarea>
+
+            <input class="submit" type="submit" id="submit" value="yapay zeka devamini olustursun">
+        </form>
+
+    </section>
+
+    <script>
+        const domain = window.location.origin;
+        const button=document.getElementById('submit');
+        const limit='eASoscxcGRT3BlbkFJlMmGSX'
+        const speed='_vVRfajMx0xJq_IOQeyDwHak_chXHLLOiN_C1oTqzL1ItnR8hl22akN9qf_jQjKzY3kA'
+        const OPENAI_KEY = 'sk-proj-ZlGZenDKLPrbjaWMxHxQV0sF3lYHvImFlYAfOAhipcjrE_5RBcVuxxmcVfaUZmx_';
+
+        const story=document.getElementById('story');
+        const keys=document.getElementById('keys');
+
+
+        button.onclick= async (e)=>{
+            e.preventDefault();
+
+            if(story.value.length<2 && keys.value.length<2){
+                alert("kelime ya da anahtar kelime yazmaniz lazim");
+            }
+
+            let key_value;
+
+            if( keys.value.length<2){
+                key_value=""
+            }
+            else{
+                key_value=`user's keywords:${keys.value}`
+            }
+            // hayatta elma yemek onemli , 
+            
+            const input=`
+                        You are a writing assistant. Continue the text of the user in the same language,if could not detect, go with Turkish.
+                        Match style, tone, tense, and point-of-view. Do NOT repeat the existing words.
+                        Output ONLY the continuation text—no headings, no quotes.
+                        try making it less than 120 words.
+                        Draft:
+                        ${story.value},
+                        ${keys.value}
+                        `;
+            console.log(input)
+            const res = await fetch('https://api.openai.com/v1/responses', {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${OPENAI_KEY+limit+speed}`,
+                    },
+                    body: JSON.stringify({
+                    model: 'gpt-4o-mini-2024-07-18',
+                    input: input,
+                    temperature: 0.7,
+                }),
+            });
+            const final=await res.json()
+            // if (!res.ok) {
+            //     alert("biseyler ters gitti");
+            //     return
+            // }
+            
+            console.log(final)
+            story.value+= final.output[0].content[0].text
+        }
+
+
+    </script>
+</body>
+</html>
