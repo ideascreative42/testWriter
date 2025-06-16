@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+    <meta name="googlebot" content="noindex,nofollow">
     <title>Document</title>
 
     <style>
@@ -41,6 +44,20 @@
             border: none;
             margin: 0.8em 0;
             cursor: pointer;
+        }
+
+        .chatgpt_text{
+            transition:background-color 0.4s;
+            animation: highlights 4s;
+        }
+
+        @keyframes highlights {
+            0%{
+                background-color: rgb(238, 29, 238);
+            }
+            100%{
+                background-color: none;
+            }
         }
 
     </style>
@@ -87,15 +104,24 @@
             }
             // hayatta elma yemek onemli , 
             
-            const input=`
-                        You are a writing assistant. Continue the text of the user in the same language,if could not detect, go with Turkish.
-                        Match style, tone, tense, and point-of-view. Do NOT repeat the existing words.
-                        Output ONLY the continuation text—no headings, no quotes.
-                        try making it less than 120 words.
-                        Draft:
-                        ${story.value},
-                        ${keys.value}
-                        `;
+            //first input style
+            // `
+            //             You are a writing assistant. Continue the text of the user in the same language,if could not detect, go with Turkish.
+            //             Match style, tone, tense, and point-of-view. Do NOT repeat the existing words.
+            //             Output ONLY the continuation text—no headings, no quotes.
+            //             try making it less than 120 words.
+            //             Draft:
+            //             ${story.value},
+            //             ${keys.value}
+            //             `
+            const input=
+                        `(Co-author) Continue after last word. Same language/style. 2-3 sentences <60 w. Push plot;**Advance the scene** but **do NOT conclude or resolve the plot**, never end  it.
+                        Output ONLY the continuation text,No repeats, headers, or quotes.
+                        draft:
+                        ${story.value}
+
+                        ${keys.value}`;
+
             console.log(input)
             const res = await fetch('https://api.openai.com/v1/responses', {
                     method: 'POST',
@@ -116,7 +142,7 @@
             // }
             
             console.log(final)
-            story.value+= final.output[0].content[0].text
+            story.innerHTML+= `<span class="chatgpt_text"> ${final.output[0].content[0].text}</span>`
         }
 
 
