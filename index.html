@@ -13,6 +13,12 @@
             /* font-size: 1.125em; */
             padding-top: 36px;
         }
+        section{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            /* gap: 1em; */
+        }
         form{
             display: flex;
             flex-direction: column;
@@ -35,15 +41,32 @@
         }
 
 
-        .submit{
+        .buttons{
+            display: flex;
+            gap: 0.5em;
+            align-items: center;
+            margin: 0.8em 0;
+            
+        }
+
+        .submit ,button{
             font-size: 1em;
-            background-color: black;
-            color: white;
+
             padding: 0.64em 0.82em;
             border-radius: 0.4em;
             border: none;
-            margin: 0.8em 0;
+
             cursor: pointer;
+        }
+
+        .submit{
+            background-color: black;
+            color: white;
+        }
+
+        button{
+            border: solid thin black;
+            background-color: transparent;
         }
 
 
@@ -78,26 +101,81 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        #story{
+            margin-bottom: 16px;
+        }
+
+        .story_holder{
+            padding: 0.46em 0.8em;
+            line-height: 1.5em;
+            text-align: left;
+            width: 80%;
+            max-width: 660px;
+            margin: 0 auto;
+            background-color: transparent;
+            border: solid thin black;
+            border-radius: 0.3em;
+        }
+
+        h2{
+            font-weight: normal;
+            font-size:18px;
+            text-align: center;
+            margin: 0;
+            padding: 1.6em 0 0.8em;
+        }
+
+        .new_txt{
+            border-radius: 0.2em;
+            animation: highlights 2s ease-in;
+        }
+        @keyframes highlights {
+            0%{
+                background-color: rgb(193, 21, 193);
+            }
+            100%{
+                background-color: transparent;
+            }
+        }
     </style>
 </head>
 <body>
     <section>
         <form action="">
             <label for="keys">Anahtar kelimeler</label>
-            <textarea name="story" rows="4" placeholder="Anahtar kelimeleri yaziniz" id="keys"></textarea>
+            <textarea name="story" rows="3" placeholder="Anahtar kelimeleri yaziniz" id="keys"></textarea>
 
-            <label for="story">burada yazin</label>
-            <textarea name="story" rows="16" placeholder="hikayenizi yaziniz..." id="story"></textarea>
+            <label for="story">Hikayeni başlat</label>
+            <textarea name="story" rows="8" placeholder="hikayenizi yaziniz..." id="story"></textarea>
 
-            <input class="submit" type="submit" id="submit" value="yapay zeka devamini olustursun">
+            <label for="insctuctor">Yapay Zekaya Yanıt Ver</label>
+            <textarea name="insctuctor" rows="4" placeholder="yapay zekaya yanıt ver..." id="insctuctor"></textarea>
+
             <div id="loading" class="dontshow">yapay zeka metni hazırlıyor <span class="loading-spinner"></span></div>
+            <div class="buttons">
+                
+                <input class="submit" type="submit" id="submit" value="yapay zekadan yardım al">
+                <button id="add_to_story">Hikayeye ekle</button>
+            </div>
+
         </form>
+
+        <h2>Hiyake</h2>
+        <div class="story_holder" id="story_main" contentEditable="true">
+
+        </div>
 
     </section>
 
     <script>
         const domain = window.location.origin;
         const button=document.getElementById('submit');
+
+        const add_button=document.getElementById('add_to_story');
+
+        const story_main=document.getElementById('story_main');
+        
         
         const loading=document.getElementById('loading');
         const limit='eASoscxcGRT3BlbkFJlMmGSX'
@@ -106,42 +184,63 @@
 
         const story=document.getElementById('story');
         const keys=document.getElementById('keys');
+        const insctuctor=document.getElementById('insctuctor');
+        
 
 
         button.onclick= async (e)=>{
             e.preventDefault();
 
-            if(story.value.length<2 && keys.value.length<2){
+            if(story.value.length<1 && keys.value.length<1 && story_main.textContent.length<1 && insctuctor.value.length<1){
                 alert("kelime ya da anahtar kelime yazmaniz lazim");
             }
 
+            let instructions;
             let key_value;
+
+            if( insctuctor.value.length<2){
+                instructions=""
+            }
+            else{
+                instructions=`${insctuctor.value}`
+            }
+
 
             if( keys.value.length<2){
                 key_value=""
             }
             else{
-                key_value=`user's keywords:${keys.value}`
+                key_value=`${keys.value}`
             }
-            // hayatta elma yemek onemli , 
-            
-            //first input style
-            // `
-            //             You are a writing assistant. Continue the text of the user in the same language,if could not detect, go with Turkish.
-            //             Match style, tone, tense, and point-of-view. Do NOT repeat the existing words.
-            //             Output ONLY the continuation text—no headings, no quotes.
-            //             try making it less than 120 words.
-            //             Draft:
-            //             ${story.value},
-            //             ${keys.value}
-            //             `
-            const input=
-                        `(Co-author) Continue after last word. Same language/style. 2-3 sentences <60 w. Push plot;**Advance the scene** but **do NOT conclude or resolve the plot**, never end  it.
-                        Output ONLY the continuation text,No repeats, headers, or quotes.
-                        draft:
-                        ${story.value}
 
-                        ${keys.value}`;
+
+           //past prompt
+        //    `(Co-author) Continue after last word. Same language/style. 2-3 sentences <60 w. Push plot;**Advance the scene** but **do NOT conclude or resolve the plot**, never end  it.
+        //                 Output ONLY the continuation text,No repeats, headers, or quotes.give most attention to user instructions in writing, if provided.
+
+        //                 ${instructions}
+        //                 user draft:
+        //                 ${story_main.textContent}
+
+        //                 ${key_value}`;
+
+            const input=
+                `You are a story co-author. Continue directly after the user’s draft. Use 2–3 sentences (max 60 words). Output ONLY the continuation — no repeats, quotes, or summaries.
+
+                IMPORTANT:
+                - Follow the user’s instructions exactly (may be in Turkish or another language).
+                - If the user requests a different language, switch language — but keep the same **style, tone, pacing, and character voice** as the original and Maintain full continuity ,this must feel like the same story in a different language.
+                - Do NOT end the story — just push the plot forward.
+
+                USER INSTRUCTIONS:  
+                ${instructions}
+
+                USER DRAFT:  
+                ${story_main.textContent}
+
+                KEYWORDS (for reference):  
+                ${key_value}`
+                        
 
             console.log(input);
             loading.classList.add('showLoading')
@@ -165,7 +264,36 @@
             
             console.log(final)
             loading.classList.remove('showLoading')
-            story.value+= `${final.output[0].content[0].text}`
+
+            const newSpan = document.createElement('span');
+            newSpan.classList.add('new_txt'); 
+            newSpan.textContent = final.output[0].content[0].text;
+            story_main.appendChild(newSpan);
+            const br = document.createElement('br');
+            story_main.appendChild(br);
+
+
+            // story_main.innerHTML+= `<span class="new_txt">${final.output[0].content[0].text}</span><br>`
+        }
+
+        add_to_story.onclick=(e)=>{
+            e.preventDefault();
+
+            if(story.value.length<1){
+                return
+            }
+
+            const newSpan = document.createElement('span');
+            newSpan.classList.add('new_txt'); 
+            newSpan.textContent = ` ${story.value}`;
+            story_main.appendChild(newSpan);
+            const br = document.createElement('br');
+            story_main.appendChild(br);
+
+
+            //span , delete 
+            // story_main.innerHTML+=`<span class="new_txt">${story.value}</span><br>`
+            story.value="";
         }
 
 
