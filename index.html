@@ -11,20 +11,29 @@
     <style>
         body{
             /* font-size: 1.125em; */
-            padding-top: 36px;
+            /* padding-top: 36px; */
+            margin: 1.4em 1em;
         }
         section{
+            
             display: flex;
             flex-direction: column;
             justify-content: center;
             /* gap: 1em; */
+            border: rgb(45, 0, 171) solid 1px;
+            margin: 0 auto;
+            max-width: 660px;
+            padding: 1.2em 1em 0.4em;
+            border-radius: 1.2em;
+
+            background-image: linear-gradient(-40deg , rgb(255, 214, 255),white,rgb(255, 222, 228));
         }
         form{
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 0.6em;
+            gap: 1.2em;
             /* font-size: 1em; */
         }
         input[type="text"],textarea{
@@ -40,15 +49,27 @@
             font-size: 1.125em;
         }
 
+        textarea{
+            width: 84%;
+            border-radius: 0.5em;
+        }
 
         .buttons{
             display: flex;
+            flex-direction: column;
             gap: 0.5em;
-            align-items: center;
+            /* align-items: center; */
+
             margin: 0.8em 0;
             
         }
 
+
+        @media only screen and (min-width: 475px) {
+            .buttons{
+                flex-direction: row;
+            }
+        }
         .submit ,button{
             font-size: 1em;
 
@@ -138,35 +159,46 @@
                 background-color: transparent;
             }
         }
+        h1{
+            text-align: center;
+            margin: 0;
+            padding: 0.3em 0 1.4em;
+        }
+        .footer{
+            margin-top: 36px;
+        }
     </style>
 </head>
 <body>
     <section>
+        <h1>Hibrit Yazim Modeli</h1>
         <form action="">
-            <label for="keys">Anahtar kelimeler</label>
-            <textarea name="story" rows="3" placeholder="Anahtar kelimeleri yaziniz" id="keys"></textarea>
+            <label for="keys">Anahtar Kelimeler</label>
+            <textarea name="story" rows="3" placeholder="Örn:kardeşlik, pişmanlık, doğa" id="keys"></textarea>
 
-            <label for="story">Hikayeni başlat</label>
-            <textarea name="story" rows="8" placeholder="hikayenizi yaziniz..." id="story"></textarea>
+            <label for="story">İnsan yazar Devamı</label>
+            <textarea name="story" rows="8" placeholder="Bir bölüm daha yazın..." id="story"></textarea>
 
             <label for="insctuctor">Yapay Zekaya Yanıt Ver</label>
             <textarea name="insctuctor" rows="4" placeholder="yapay zekaya yanıt ver..." id="insctuctor"></textarea>
 
-            <div id="loading" class="dontshow">yapay zeka metni hazırlıyor <span class="loading-spinner"></span></div>
+            <div id="loading" class="dontshow">yapay zeka metni hazırlıyor<span class="loading-spinner"></span></div>
             <div class="buttons">
                 
-                <input class="submit" type="submit" id="submit" value="yapay zekadan yardım al">
-                <button id="add_to_story">Hikayeye ekle</button>
+                <input class="submit" type="submit" id="submit" value="Yapay Zeka ile Devam ettir">
+                <button id="add_to_story">İnsan Devamı ekle</button>
             </div>
 
         </form>
 
-        <h2>Hiyake</h2>
+        <h2>Hibrit Hikaye</h2>
         <div class="story_holder" id="story_main" contentEditable="true">
 
         </div>
 
+        <div class="footer"><p style="text-align: center;">Powered by TEKNOFEST</p></div>
     </section>
+
 
     <script>
         const domain = window.location.origin;
